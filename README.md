@@ -1,1 +1,1 @@
-# code-snippets
+Organize and search code snippets easily
