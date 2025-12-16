@@ -1,1 +1,1 @@
-Organize and search code snippets easily
+making guide soon, as i finish storage.js coding 😉
