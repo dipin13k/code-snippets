@@ -137,11 +137,16 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Render each snippet
+        // ⚡ Bolt Optimization: Use a DocumentFragment to batch DOM updates.
+        // This reduces DOM manipulations from one per snippet to a single append operation,
+        // significantly improving rendering performance by minimizing browser reflows and repaints.
+        const fragment = document.createDocumentFragment();
         filteredSnippets.forEach(snippet => {
             const snippetCard = createSnippetCard(snippet);
-            snippetsContainer.appendChild(snippetCard);
+            fragment.appendChild(snippetCard);
         });
+
+        snippetsContainer.appendChild(fragment);
     }
     
     /**
