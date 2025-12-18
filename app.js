@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close buttons
     const closeButtons = document.querySelectorAll('.close');
     
-    // Storage manager instance
-    const storage = new StorageManager();
+    // Use the singleton instance of the storage manager.
+    const storage = storageManager;
     
     // Current snippet ID for editing/viewing
     let currentSnippetId = null;
@@ -114,10 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 snippet.title.toLowerCase().includes(searchTerm) || 
                 snippet.description.toLowerCase().includes(searchTerm) ||
                 snippet.code.toLowerCase().includes(searchTerm) ||
-                snippet.tags.some(t => t.toLowerCase().includes(searchTerm));
+                (snippet.tags && snippet.tags.some(t => t.toLowerCase().includes(searchTerm)));
             
             const matchesLanguage = !language || snippet.language === language;
-            const matchesTag = !tag || snippet.tags.includes(tag);
+            const matchesTag = !tag || (snippet.tags && snippet.tags.includes(tag));
             
             return matchesSearch && matchesLanguage && matchesTag;
         });
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.dataset.id = snippet.id;
         
         // Create tags HTML
-        const tagsHtml = snippet.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
+        const tagsHtml = (snippet.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
         
         // Truncate code for preview
         const truncatedCode = snippet.code.length > 150 
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Set tags
         const tagsContainer = document.getElementById('view-tags');
-        tagsContainer.innerHTML = snippet.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
+        tagsContainer.innerHTML = (snippet.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
         
         // Set code with syntax highlighting
         const codeElement = document.getElementById('view-code');
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTitle.textContent = 'Edit Snippet';
         document.getElementById('snippet-title').value = snippet.title;
         document.getElementById('snippet-language').value = snippet.language;
-        document.getElementById('snippet-tags').value = snippet.tags.join(', ');
+        document.getElementById('snippet-tags').value = (snippet.tags || []).join(', ');
         document.getElementById('snippet-description').value = snippet.description;
         document.getElementById('snippet-code').value = snippet.code;
         
@@ -520,6 +520,7 @@ print(squares)  # [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]`
      * @returns {string} Escaped text
      */
     function escapeHtml(text) {
+        if (!text) return '';
         const map = {
             '&': '&amp;',
             '<': '&lt;',
