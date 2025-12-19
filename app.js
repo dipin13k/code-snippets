@@ -424,25 +424,34 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string} message - Notification message
      * @param {string} type - Notification type (success, error, info)
      */
+
+    // Notification element and timeout
+    let notificationTimeout;
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        padding: '15px 20px',
+        borderRadius: 'var(--border-radius)',
+        color: 'white',
+        fontWeight: '500',
+        zIndex: '9999',
+        transform: 'translateX(120%)',
+        transition: 'transform 0.3s ease-in-out',
+        opacity: '0',
+        visibility: 'hidden'
+    });
+    document.body.appendChild(notification);
+
     function showNotification(message, type = 'info') {
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
+        // ⚡ Bolt: Reuse a single DOM element for all notifications to avoid expensive element creation/destruction on each call.
+        clearTimeout(notificationTimeout);
+
+        // Set content and type
         notification.textContent = message;
-        
-        // Add styles
-        Object.assign(notification.style, {
-            position: 'fixed',
-            top: '20px',
-            right: '20px',
-            padding: '15px 20px',
-            borderRadius: 'var(--border-radius)',
-            color: 'white',
-            fontWeight: '500',
-            zIndex: '9999',
-            transform: 'translateX(100%)',
-            transition: 'transform 0.3s ease'
-        });
+        notification.className = `notification notification-${type}`;
         
         // Set background color based on type
         const colors = {
@@ -452,20 +461,16 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         notification.style.backgroundColor = colors[type] || colors.info;
         
-        // Add to page
-        document.body.appendChild(notification);
-        
         // Animate in
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
+        notification.style.visibility = 'visible';
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
         
-        // Remove after 3 seconds
-        setTimeout(() => {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 300);
+        // Set timeout to hide notification
+        notificationTimeout = setTimeout(() => {
+            notification.style.transform = 'translateX(120%)';
+            notification.style.opacity = '0';
+            notification.style.visibility = 'hidden';
         }, 3000);
     }
     
