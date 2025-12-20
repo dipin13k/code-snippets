@@ -137,11 +137,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Render each snippet
+        // ⚡ Bolt: Use a DocumentFragment to batch DOM manipulations for performance.
+        // Appending elements one by one to the DOM can cause multiple reflows.
+        // A DocumentFragment allows us to build a piece of the DOM in memory
+        // and append it to the live DOM in a single operation, which is much faster.
+        const fragment = document.createDocumentFragment();
         filteredSnippets.forEach(snippet => {
             const snippetCard = createSnippetCard(snippet);
-            snippetsContainer.appendChild(snippetCard);
+            fragment.appendChild(snippetCard);
         });
+
+        snippetsContainer.appendChild(fragment);
     }
     
     /**
