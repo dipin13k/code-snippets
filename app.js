@@ -122,6 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return matchesSearch && matchesLanguage && matchesTag;
         });
         
+        // ⚡ Bolt: Optimize rendering by using a DocumentFragment to batch DOM updates.
+        // This reduces layout reflows from O(n) to O(1) when rendering snippets.
+        const fragment = document.createDocumentFragment();
+
         // Clear container
         snippetsContainer.innerHTML = '';
         
@@ -140,8 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render each snippet
         filteredSnippets.forEach(snippet => {
             const snippetCard = createSnippetCard(snippet);
-            snippetsContainer.appendChild(snippetCard);
+            fragment.appendChild(snippetCard);
         });
+
+        // Append the fragment to the container once
+        snippetsContainer.appendChild(fragment);
     }
     
     /**
