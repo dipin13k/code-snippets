@@ -137,11 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Render each snippet
+        // ⚡ Bolt: Use a DocumentFragment to batch DOM updates, which is much faster
+        // than appending each card individually and causing multiple reflows.
+        const fragment = document.createDocumentFragment();
         filteredSnippets.forEach(snippet => {
             const snippetCard = createSnippetCard(snippet);
-            snippetsContainer.appendChild(snippetCard);
+            fragment.appendChild(snippetCard);
         });
+        snippetsContainer.appendChild(fragment);
     }
     
     /**
