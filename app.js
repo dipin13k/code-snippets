@@ -137,11 +137,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Render each snippet
+        // ⚡ Bolt: Use a DocumentFragment to batch DOM updates and avoid layout thrashing.
+        const fragment = document.createDocumentFragment();
         filteredSnippets.forEach(snippet => {
             const snippetCard = createSnippetCard(snippet);
-            snippetsContainer.appendChild(snippetCard);
+            fragment.appendChild(snippetCard);
         });
+
+        // Append the fragment to the container in a single operation
+        snippetsContainer.appendChild(fragment);
     }
     
     /**
