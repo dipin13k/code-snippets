@@ -122,26 +122,31 @@ document.addEventListener('DOMContentLoaded', () => {
             return matchesSearch && matchesLanguage && matchesTag;
         });
         
-        // Clear container
-        snippetsContainer.innerHTML = '';
+        // ⚡ Bolt: Use a DocumentFragment to batch DOM updates for performance.
+        // Appending nodes to a fragment and then adding the single fragment to the DOM
+        // is much faster than appending each node individually, as it triggers only one reflow.
+        const fragment = document.createDocumentFragment();
         
-        // Check if there are any snippets
         if (filteredSnippets.length === 0) {
-            snippetsContainer.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-code"></i>
-                    <h3>No snippets found</h3>
-                    <p>Try adjusting your search or filters, or add a new snippet.</p>
-                </div>
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.innerHTML = `
+                <i class="fas fa-code"></i>
+                <h3>No snippets found</h3>
+                <p>Try adjusting your search or filters, or add a new snippet.</p>
             `;
-            return;
+            fragment.appendChild(emptyState);
+        } else {
+            // Render each snippet into the fragment
+            filteredSnippets.forEach(snippet => {
+                const snippetCard = createSnippetCard(snippet);
+                fragment.appendChild(snippetCard);
+            });
         }
         
-        // Render each snippet
-        filteredSnippets.forEach(snippet => {
-            const snippetCard = createSnippetCard(snippet);
-            snippetsContainer.appendChild(snippetCard);
-        });
+        // Clear the container and append the fragment in one operation
+        snippetsContainer.innerHTML = '';
+        snippetsContainer.appendChild(fragment);
     }
     
     /**
