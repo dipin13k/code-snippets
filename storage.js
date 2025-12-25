@@ -165,3 +165,7 @@ class StorageManager {
         });
     }
 }
+
+// ⚡ Bolt: Enforce Singleton pattern by creating a single instance.
+// This prevents multiple instances and ensures consistent data access.
+const storage = new StorageManager();

@@ -24,8 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close buttons
     const closeButtons = document.querySelectorAll('.close');
     
-    // Storage manager instance
-    const storage = new StorageManager();
+    // Storage manager instance is now a singleton, defined in storage.js
     
     // Current snippet ID for editing/viewing
     let currentSnippetId = null;
@@ -125,6 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear container
         snippetsContainer.innerHTML = '';
         
+        // ⚡ Bolt: Use a DocumentFragment to batch DOM updates for performance.
+        // This avoids multiple reflows and repaints, making rendering much faster
+        // for large numbers of snippets.
+        const fragment = document.createDocumentFragment();
+
         // Check if there are any snippets
         if (filteredSnippets.length === 0) {
             snippetsContainer.innerHTML = `
@@ -137,11 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Render each snippet
+        // Render each snippet into the fragment
         filteredSnippets.forEach(snippet => {
             const snippetCard = createSnippetCard(snippet);
-            snippetsContainer.appendChild(snippetCard);
+            fragment.appendChild(snippetCard);
         });
+
+        // Append the fragment to the container in a single operation
+        snippetsContainer.appendChild(fragment);
     }
     
     /**
