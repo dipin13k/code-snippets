@@ -1,1 +1,1 @@
-making guide soon, as i finish storage.js coding 😉
+View site at : https://dipinxbt.github.io/code-snippets/
